@@ -1,27 +1,13 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.8)
-
 project(cppmonad)
+cmake_minimum_required(VERSION 3.0)
 
-if(MSVC)
-  if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-  endif()
-elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-  # Update if necessary
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
-endif()
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIR})
+link_directories(${Boost_LIBRARY_DIRS})
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+set(Boost_ALL_DYN_LINK ON)
 
-add_library(Monad INTERFACE)
-target_include_directories(Monad INTERFACE include)
-target_compile_features(Monad INTERFACE
-  cxx_alias_templates
-  cxx_trailing_return_types
-  cxx_return_type_deduction)
-
-add_subdirectory(test)
-
-enable_testing()
-#add_test(NAME Test COMMAND TestRunner)
-
+add_executable(${PROJECT_NAME} test.cpp)
+target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
